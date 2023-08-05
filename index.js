@@ -60,5 +60,5 @@ async function within(fn, res, duration) {
 }
 
 async function getUsers() {
-    return (await db.getUsers())
+    return (await userRoute.getUsers())
 }
