@@ -7,17 +7,6 @@ const usersSchema = new mongoose.Schema({
         required: true,
         minlength: 3,
         maxlength: 30
-    },
-    email: {
-        type: String,
-        required: true,
-        minlength: 3,
-        maxlength: 200,
-        unique: true
-    },
-    favorites: {
-        type: [String],
-        default: [],
     }
 }, {
     timestamps: true,
