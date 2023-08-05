@@ -40,3 +40,25 @@ mongoose.connect(uri, {
 })
 .then(() => console.log("MongoDB connection establised"))
 .catch((error) => console.log("MongoDB Connection failed: ", error.message))
+
+module.exports = async (req, res) => {
+    await within(getUsers, res, 7000)
+}
+
+async function within(fn, res, duration) {
+    const id = setTimeout(() => res.json({
+        message: "There was an error with the upstream service!"
+    }), duration)
+    
+    try {
+        let data = await fn()
+        clearTimeout(id)
+        res.json(data)
+    } catch(e) {
+      res.status(500).json({message: e.message})
+    }
+}
+
+async function getUsers() {
+    return (await db.getUsers())
+}
