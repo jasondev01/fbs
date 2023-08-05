@@ -15,15 +15,18 @@ const registerUser = async (req, res) => {
 
         let user = await userModel.findOne({email}); // find the same emaill
         
-        if(user) 
+        if(user) {
             return res.status(400).json("User with the given email already exist"); // if email already taken by a user
-        if(!name || !email || !password) 
+        }
+        if(!name || !email || !password) {
             return res.status(400).json("All fields are requried"); // validates the inputs
-        if(!validator.isEmail(email)) 
+        }
+        if(!validator.isEmail(email)) {
             return res.status(400).json("Email must be a valid email"); // validates emaill
-        if(!validator.isStrongPassword(password)) 
+        }
+        if(!validator.isStrongPassword(password)) {
             return res.status(400).json("Password must be a strong password"); // validates emaill
-        
+        }
         user = new userModel({name, email, password}); // if the above condition is success, then proceed to post new User
 
         const salt = await bcrypt.genSalt(10); // makes a hash with 10 letters
@@ -86,12 +89,18 @@ const addFavoriteRecipe = async (req, res) => {
     try {
       const user = await userModel.findByIdAndUpdate(
             userId,
-            { $addToSet: { favorites: recipeUri } }, // Add the recipeUri to favorites array if it doesn't exist already
-            { new: true }
+            { 
+                $addToSet: { 
+                    favorites: recipeUri 
+                } 
+            }, // Add the recipeUri to favorites array if it doesn't exist already
+            { 
+                new: true 
+            }
         );
         res.status(200).json(user);
     } catch (error) {
-      res.status(500).json({ message: "Failed to add favorite recipe", error });
+        res.status(500).json({ message: "Failed to add favorite recipe", error });
     }
   };
   
@@ -101,15 +110,20 @@ const removeFavoriteRecipe = async (req, res) => {
     try {
         const user = await userModel.findByIdAndUpdate(
             userId,
-            { $pull: { favorites: recipeUri } }, // Remove the recipeUri from favorites array
-            { new: true }
+            { 
+                $pull: { 
+                    favorites: recipeUri 
+                } 
+            }, // Remove the recipeUri from favorites array
+            { 
+                new: true 
+            }
         );
         res.status(200).json(user);
     } catch (error) {
         res.status(500).json({ message: "Failed to remove favorite recipe", error });
     }
 };
-
 
 module.exports = { 
     registerUser, 
