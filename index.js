@@ -6,10 +6,16 @@ const userRoute = require("./Routes/userRoute");
 const app = express(); // add extra capability
 require("dotenv").config(); 
 
+const corsOptions = {
+    origin: "*", // Ganti dengan URL frontend Anda
+    credentials: true, // Mengizinkan pengiriman cookie melalui CORS
+};
+
 // api routes // middlewares
 app.use(express.json()); 
-app.use(cors()); 
+app.use(cors(corsOptions)); 
 app.use("/api/users", userRoute);
+
 
 // root route
 app.get("/", (req, res) => {
