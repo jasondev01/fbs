@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const userRoute = require("./Routes/userRoute");
+const db = require("./db");
 
 const app = express(); // add extra capability
 require("dotenv").config(); 
@@ -34,31 +35,36 @@ app.listen(port, (req, res) => {
     console.log(`server running on port: ${port}`);
 });
 
-mongoose.connect(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
-.then(() => console.log("MongoDB connection establised"))
-.catch((error) => console.log("MongoDB Connection failed: ", error.message))
+mongoose
+    .connect(uri, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    })
+    .then(() => {
+        console.log("MongoDB connection establised");
 
-module.exports = async (req, res) => {
-    await within(getUsers, res, 7000)
-}
-
-async function within(fn, res, duration) {
-    const id = setTimeout(() => res.json({
-        message: "There was an error with the upstream service!"
-    }), duration)
+        // Serverless function
+        app.get("/api/users", async (req, res) => {
+            // Call the getUsers function using the within wrapper
+            await within(getUsers, res, 7000);
+        });
     
-    try {
-        let data = await fn()
-        clearTimeout(id)
-        res.json(data)
-    } catch(e) {
-      res.status(500).json({message: e.message})
-    }
-}
+        // Within function to handle timeouts and errors
+        async function within(fn, res, duration) {
+            const id = setTimeout(() => res.json({ message: "There was an error with the upstream service!" }), duration);
+    
+            try {
+                let data = await fn();
+                clearTimeout(id);
+                res.json(data);
+            } catch (e) {
+                res.status(500).json({ message: e.message });
+            }
+        }
 
-async function getUsers() {
-    return (await userRoute.getUsers())
-}
+        // Function to get users from the database
+        async function getUsers() {
+            return await db.getUsers();
+        }
+    })
+    .catch((error) => console.log("MongoDB Connection failed: ", error.message))
