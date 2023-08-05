@@ -44,27 +44,27 @@ mongoose
         console.log("MongoDB connection establised");
 
         // Serverless function
-        // app.get("/api/users", async (req, res) => {
+        app.get("/api/users", async (req, res) => {
             // Call the getUsers function using the within wrapper
-            // await within(getUsers, res, 7000);
-        // });
+            await within(getUsers, res, 7000);
+        });
     
         // Within function to handle timeouts and errors
-        // async function within(fn, res, duration) {
-        //     const id = setTimeout(() => res.json({ message: "There was an error with the upstream service!" }), duration);
+        async function within(fn, res, duration) {
+            const id = setTimeout(() => res.json({ message: "There was an error with the upstream service!" }), duration);
     
-        //     try {
-        //         let data = await fn();
-        //         clearTimeout(id);
-        //         res.json(data);
-        //     } catch (e) {
-        //         res.status(500).json({ message: e.message });
-        //     }
-        // }
+            try {
+                let data = await fn();
+                clearTimeout(id);
+                res.json(data);
+            } catch (e) {
+                res.status(500).json({ message: e.message });
+            }
+        }
 
-        // // Function to get users from the database
-        // async function getUsers() {
-        //     return await db.getUsers();
-        // }
+        // Function to get users from the database
+        async function getUsers() {
+            return await db.getUsers();
+        }
     })
     .catch((error) => console.log("MongoDB Connection failed: ", error.message));
