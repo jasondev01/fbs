@@ -8,7 +8,7 @@ const app = express(); // add extra capability
 require("dotenv").config(); 
 
 const corsOptions = {
-    origin: "*", // Ganti dengan URL frontend Anda
+    origin: "http://localhost:3000", // Ganti dengan URL frontend Anda
     credentials: true, // Mengizinkan pengiriman cookie melalui CORS
 };
 
@@ -67,4 +67,4 @@ mongoose
             return await db.getUsers();
         }
     })
-    .catch((error) => console.log("MongoDB Connection failed: ", error.message))
+    .catch((error) => console.log("MongoDB Connection failed: ", error.message));
