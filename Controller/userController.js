@@ -102,7 +102,7 @@ const addFavoriteRecipe = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: "Failed to add favorite recipe", error });
     }
-  };
+};
   
 const removeFavoriteRecipe = async (req, res) => {
     const { userId, recipeUri } = req.body;
